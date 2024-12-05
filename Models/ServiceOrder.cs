@@ -1,8 +1,14 @@
+
+using System.ComponentModel.DataAnnotations;
+
+
 namespace Praxisarbeit_M295.Models
 {
     public class ServiceOrder
     {
+        [Key] // Diese Annotation definiert die Property als Primärschlüssel
         public int OrderId { get; set; }
+
         public string? Name { get; set; }
         public string? Email { get; set; }
         public string? Phone { get; set; }
