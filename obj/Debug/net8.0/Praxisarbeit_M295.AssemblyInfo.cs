@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Praxisarbeit_M295")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fbbe32fa39a75248636f87b1870cd3def585f670")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aa79742b0f00611a88274e9fa67b807930976bd4")]
 [assembly: System.Reflection.AssemblyProductAttribute("Praxisarbeit_M295")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Praxisarbeit_M295")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
