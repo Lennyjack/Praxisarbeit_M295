@@ -1,0 +1,6 @@
+@Praxisarbeit_M295_HostAddress = http://localhost:5080
+
+GET {{Praxisarbeit_M295_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
