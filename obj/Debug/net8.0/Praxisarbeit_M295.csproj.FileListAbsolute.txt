@@ -170,3 +170,4 @@ C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 29
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\obj\Debug\net8.0\Praxisarbeit_M295.pdb
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\obj\Debug\net8.0\Praxisarbeit_M295.genruntimeconfig.cache
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\obj\Debug\net8.0\ref\Praxisarbeit_M295.dll
+C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
