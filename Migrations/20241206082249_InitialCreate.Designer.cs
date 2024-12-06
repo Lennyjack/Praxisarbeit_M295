@@ -12,7 +12,7 @@ using Praxisarbeit_M295.Data;
 namespace Praxisarbeit_M295.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241206081842_InitialCreate")]
+    [Migration("20241206082249_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -124,9 +124,9 @@ namespace Praxisarbeit_M295.Migrations
                         new
                         {
                             UserId = 1,
-                            PasswordHash = "voTMF51IIdJRJ3zAef/OchUBgqvqRiIA7II5Cm89yaM=",
+                            PasswordHash = "xUb/CtOFbmSNPUjVm0nLG3isdZeWSvqZw7wGjIWey8M=",
                             Role = "Admin",
-                            Salt = "nqW8sY3ylLXt/Bv45w+XCABc8eSj9+2W3WlS2NA7kJPa2ozEsxzR+I0AFvAbERPg1nFUT3f1YwCBJdQ5ubEyjg==",
+                            Salt = "JBQionfB20VJL4pUmttq0VjqJUchxJZGlQ5jSjFgiAEjhZ8NOFbyAMP0A5llJVpKA52hL5APfxW2V1rYQte5vA==",
                             Username = "admin"
                         });
                 });

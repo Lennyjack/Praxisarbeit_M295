@@ -75,7 +75,7 @@ namespace Praxisarbeit_M295.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "UserId", "PasswordHash", "Role", "Salt", "Username" },
-                values: new object[] { 1, "voTMF51IIdJRJ3zAef/OchUBgqvqRiIA7II5Cm89yaM=", "Admin", "nqW8sY3ylLXt/Bv45w+XCABc8eSj9+2W3WlS2NA7kJPa2ozEsxzR+I0AFvAbERPg1nFUT3f1YwCBJdQ5ubEyjg==", "admin" });
+                values: new object[] { 1, "xUb/CtOFbmSNPUjVm0nLG3isdZeWSvqZw7wGjIWey8M=", "Admin", "JBQionfB20VJL4pUmttq0VjqJUchxJZGlQ5jSjFgiAEjhZ8NOFbyAMP0A5llJVpKA52hL5APfxW2V1rYQte5vA==", "admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Logs_UserId",
