@@ -28,7 +28,7 @@ namespace Praxisarbeit_M295.Controllers
             var user = await _context.Users
                 .SingleOrDefaultAsync(u => u.Username == loginDto.Username);
 
-            if (user == null || !VerifyPasswordHash(loginDto.Password, user.PasswordHash, user.Salt))
+            if (user == null || !VerifyPasswordHash(loginDto.Password, user.PasswordHash))
             {
                 return Unauthorized("Falscher Benutzername oder Passwort.");
             }
@@ -46,13 +46,13 @@ namespace Praxisarbeit_M295.Controllers
                 return BadRequest("Benutzername bereits vergeben.");
             }
 
-            var (passwordHash, salt) = CreatePasswordHash(registerDto.Password);
+            var passwordHash = CreatePasswordHash(registerDto.Password);
 
             var newUser = new User
             {
                 Username = registerDto.Username,
                 PasswordHash = passwordHash,
-                Salt = salt, // Salt speichern
+                // Salt = salt, // Salt speichern
                 Role = "Mitarbeiter"
             };
 
@@ -63,36 +63,41 @@ namespace Praxisarbeit_M295.Controllers
         }
 
         // Hilfsfunktionen für die Passwortverwaltung
-        private (string passwordHash, string salt) CreatePasswordHash(string password)
+        private string CreatePasswordHash(string password)
         {
+            return BCrypt.Net.BCrypt.HashPassword(password);
+            /*
             using (var hmac = new HMACSHA256())
             {
                 var salt = Convert.ToBase64String(hmac.Key); // Salt generieren
                 var passwordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(password)));
                 return (passwordHash, salt);
             }
+            */
         }
 
-        private bool VerifyPasswordHash(string password, string storedHash, string salt)
+        private bool VerifyPasswordHash(string password, string storedHash)
         {
-            using (var hmac = new HMACSHA256(Convert.FromBase64String(salt)))
-            {
-                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(computedHash) == storedHash;
-            }
+            return BCrypt.Net.BCrypt.Verify(password, storedHash);
+            /*   using (var hmac = new HMACSHA256(Convert.FromBase64String(salt)))
+               {
+                   var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+                   return Convert.ToBase64String(computedHash) == storedHash;
+              */
         }
-    }
-
-    // DTOs (Datenobjekte für Login/Registrierung)
-    public class UserLoginDto
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
-    }
-
-    public class UserRegisterDto
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
     }
 }
+
+// DTOs (Datenobjekte für Login/Registrierung)
+public class UserLoginDto
+{
+    public string Username { get; set; }
+    public string Password { get; set; }
+}
+
+public class UserRegisterDto
+{
+    public string Username { get; set; }
+    public string Password { get; set; }
+}
+

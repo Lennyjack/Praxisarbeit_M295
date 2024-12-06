@@ -9,6 +9,7 @@ C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 29
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Azure.Identity.dll
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Humanizer.dll
+C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Microsoft.Build.Locator.dll
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Microsoft.CodeAnalysis.dll
@@ -45,6 +46,15 @@ C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 29
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Mono.TextTemplating.dll
+C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Serilog.dll
+C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Serilog.AspNetCore.dll
+C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Serilog.Extensions.Hosting.dll
+C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Serilog.Extensions.Logging.dll
+C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Serilog.Formatting.Compact.dll
+C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Serilog.Settings.Configuration.dll
+C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Serilog.Sinks.Console.dll
+C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Serilog.Sinks.Debug.dll
+C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Serilog.Sinks.File.dll
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
@@ -170,4 +180,4 @@ C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 29
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\obj\Debug\net8.0\Praxisarbeit_M295.pdb
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\obj\Debug\net8.0\Praxisarbeit_M295.genruntimeconfig.cache
 C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\obj\Debug\net8.0\ref\Praxisarbeit_M295.dll
-C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\lenny\OneDrive - ipso! Bildung\Desktop\Allgemeine_Infos_Schule\Modul 295.3\Praxisarbeit_M295\bin\Debug\net8.0\BCrypt.Net-Next.dll

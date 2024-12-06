@@ -31,7 +31,6 @@ namespace Praxisarbeit_M295.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LogId"));
 
                     b.Property<string>("Action")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Timestamp")
@@ -71,15 +70,12 @@ namespace Praxisarbeit_M295.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Priority")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Service")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("OrderId");
@@ -105,10 +101,6 @@ namespace Praxisarbeit_M295.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Salt")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -121,9 +113,8 @@ namespace Praxisarbeit_M295.Migrations
                         new
                         {
                             UserId = 1,
-                            PasswordHash = "xUb/CtOFbmSNPUjVm0nLG3isdZeWSvqZw7wGjIWey8M=",
+                            PasswordHash = "hashedPassword",
                             Role = "Admin",
-                            Salt = "JBQionfB20VJL4pUmttq0VjqJUchxJZGlQ5jSjFgiAEjhZ8NOFbyAMP0A5llJVpKA52hL5APfxW2V1rYQte5vA==",
                             Username = "admin"
                         });
                 });

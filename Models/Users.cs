@@ -12,8 +12,8 @@ public class User
     [Required]
     public string PasswordHash { get; set; }
 
-    [Required]
-    public string Salt { get; set; } // Neu hinzugefügt
+    /*[Required]
+    public string Salt { get; set; } // Neu hinzugefügt*/
 
     public string Role { get; set; }
 }
