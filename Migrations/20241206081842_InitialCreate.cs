@@ -17,9 +17,10 @@ namespace Praxisarbeit_M295.Migrations
                 {
                     UserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,7 +33,7 @@ namespace Praxisarbeit_M295.Migrations
                 {
                     LogId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Action = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Action = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -55,9 +56,9 @@ namespace Praxisarbeit_M295.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Priority = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Service = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Priority = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Service = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AssignedTo = table.Column<int>(type: "int", nullable: true),
                     AssignedUserUserId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -73,8 +74,8 @@ namespace Praxisarbeit_M295.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "UserId", "PasswordHash", "Role", "Username" },
-                values: new object[] { 1, "hashedPassword", "Admin", "admin" });
+                columns: new[] { "UserId", "PasswordHash", "Role", "Salt", "Username" },
+                values: new object[] { 1, "voTMF51IIdJRJ3zAef/OchUBgqvqRiIA7II5Cm89yaM=", "Admin", "nqW8sY3ylLXt/Bv45w+XCABc8eSj9+2W3WlS2NA7kJPa2ozEsxzR+I0AFvAbERPg1nFUT3f1YwCBJdQ5ubEyjg==", "admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Logs_UserId",

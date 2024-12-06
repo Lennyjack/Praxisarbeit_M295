@@ -5,12 +5,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Praxisarbeit_M295.Services;
 
-
-// Erstelle den WebApplication-Builder
 var builder = WebApplication.CreateBuilder(args);
 
-// Geheimschlüssel für JWT (Sollte aus Konfigurationsdateien oder einem sicheren Speicher kommen)
-var key = builder.Configuration["JwtSettings:Key"];
+// Geheimschlüssel für JWT aus der Konfigurationsdatei
+var key = builder.Configuration["JwtSettings:Key"] ?? "SuperSecretKey123!"; // Fallback, falls der Key fehlt
 
 // Konfiguriere den DbContext für SQL Server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -22,28 +20,31 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = false, // Deaktiviere Überprüfung des Herausgebers (Issuer)
-            ValidateAudience = false, // Deaktiviere Überprüfung der Zielgruppe (Audience)
-            ValidateLifetime = true, // Überprüfe die Gültigkeit des Tokens
-            ValidateIssuerSigningKey = true, // Überprüfe die Signatur des Tokens
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)) // Setze den geheimen Schlüssel
+            ValidateIssuer = true, // Optional: Herausgeber (Issuer) validieren
+            ValidIssuer = builder.Configuration["JwtSettings:Issuer"], // Herausgeber festlegen
+            ValidateAudience = true, // Optional: Zielgruppe (Audience) validieren
+            ValidAudience = builder.Configuration["JwtSettings:Audience"], // Zielgruppe festlegen
+            ValidateLifetime = true, // Ablaufzeit des Tokens validieren
+            ValidateIssuerSigningKey = true, // Signatur des Tokens validieren
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)) // Geheimschlüssel
         };
     });
 
 // Füge den JwtService als Singleton hinzu
-builder.Services.AddSingleton<IJwtService>(sp => new JwtService(key));
+builder.Services.AddSingleton<IJwtService>(sp =>
+    new JwtService(key, int.Parse(builder.Configuration["JwtSettings:ExpiryHours"] ?? "2"))); // Ablaufzeit aus der Konfiguration
 
-// Füge Controller und andere notwendige Dienste hinzu
+// Füge Controller-Dienste hinzu
 builder.Services.AddControllers();
 
-// Swagger/OpenAPI für API-Dokumentation
+// Konfiguriere Swagger für API-Dokumentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Erstelle die Anwendung
 var app = builder.Build();
 
-// Konfiguriere die HTTP-Pipeline für Entwicklungsumgebung
+// Konfiguriere die HTTP-Pipeline für die Entwicklungsumgebung
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -53,7 +54,7 @@ if (app.Environment.IsDevelopment())
 // Aktiviere HTTPS-Umleitungen
 app.UseHttpsRedirection();
 
-// Füge Authentifikations- und Autorisierungs-Middleware hinzu
+// Aktiviere Authentifikations- und Autorisierungs-Middleware
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -31,6 +31,7 @@ namespace Praxisarbeit_M295.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LogId"));
 
                     b.Property<string>("Action")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Timestamp")
@@ -70,12 +71,15 @@ namespace Praxisarbeit_M295.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Priority")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Service")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("OrderId");
@@ -94,12 +98,19 @@ namespace Praxisarbeit_M295.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Salt")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
@@ -110,8 +121,9 @@ namespace Praxisarbeit_M295.Migrations
                         new
                         {
                             UserId = 1,
-                            PasswordHash = "hashedPassword",
+                            PasswordHash = "voTMF51IIdJRJ3zAef/OchUBgqvqRiIA7II5Cm89yaM=",
                             Role = "Admin",
+                            Salt = "nqW8sY3ylLXt/Bv45w+XCABc8eSj9+2W3WlS2NA7kJPa2ozEsxzR+I0AFvAbERPg1nFUT3f1YwCBJdQ5ubEyjg==",
                             Username = "admin"
                         });
                 });
