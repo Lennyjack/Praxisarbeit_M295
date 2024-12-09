@@ -5,50 +5,44 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Praxisarbeit_M295.Services
 {
-    // Interface für JWT-Token-Service
-    public interface IJwtService
-    {
-        string GenerateToken(string username, string role); // Token generieren
-    }
-
-    // Implementierung des JWT-Service
     public class JwtService : IJwtService
     {
-        private readonly string _key; // Geheimschlüssel für die Signierung
-        private readonly int _expiryDurationInHours; // Dauer, wie lange der Token gültig ist
+        private readonly string _key;
+        private readonly int _expiryDurationInHours;
+        private readonly string _issuer;
+        private readonly string _audience;
 
-        // Konstruktor für den Service, Geheimschlüssel und Ablaufzeit angeben
-        public JwtService(string key, int expiryDurationInHours = 2)
+        public JwtService(string key, int expiryDurationInHours, string issuer, string audience)
         {
             _key = key;
-            _expiryDurationInHours = expiryDurationInHours; // Standardwert: 2 Stunden
+            _expiryDurationInHours = expiryDurationInHours;
+            _issuer = issuer;
+            _audience = audience;
         }
 
-        // Token-Generierung
         public string GenerateToken(string username, string role)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_key); // Geheimschlüssel konvertieren
+            var key = Encoding.UTF8.GetBytes(_key);
 
-            // Claims (Informationen) für den Token
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, username), // Benutzername
-                new Claim(ClaimTypes.Role, role) // Rolle des Benutzers
+                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Role, role)
             };
 
-            // Token-Descriptor erstellen (enthält alle Details des Tokens)
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(claims), // Claims hinzufügen
-                Expires = DateTime.UtcNow.AddHours(_expiryDurationInHours), // Ablaufzeit
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(_expiryDurationInHours),
+                Issuer = _issuer,
+                Audience = _audience,
                 SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key), // Geheimschlüssel
-                    SecurityAlgorithms.HmacSha256Signature // Signaturalgorithmus
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature
                 )
             };
 
-            // Token erstellen und zurückgeben
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }

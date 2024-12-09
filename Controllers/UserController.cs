@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Praxisarbeit_M295.Data;
 using Praxisarbeit_M295.Models;
@@ -35,6 +36,38 @@ namespace Praxisarbeit_M295.Controllers
             return Ok(users);
         }
 
+
+        // GET: api/Users/Me
+        [Authorize] // Nur für authentifizierte Benutzer
+        [HttpGet("Me")]
+        public async Task<ActionResult<User>> GetCurrentUser()
+        {
+            // Hole den Benutzernamen aus dem JWT-Token
+            var username = User.Identity?.Name;
+            if (string.IsNullOrEmpty(username))
+            {
+                return Unauthorized(new { Message = "Benutzer ist nicht authentifiziert." });
+            }
+
+            // Suche den Benutzer in der Datenbank
+            var user = await _context.Users
+                .SingleOrDefaultAsync(u => u.Username == username);
+
+            if (user == null)
+            {
+                return NotFound(new { Message = "Benutzer wurde nicht gefunden." });
+            }
+
+            // Gib den Benutzer zurück (ohne sensible Daten wie PasswordHash)
+            return Ok(new
+            {
+                user.UserId,
+                user.Username,
+                user.Role
+            });
+        }
+
+
         // POST: api/Users/Login
         [HttpPost("Login")]
         public async Task<ActionResult<object>> Login([FromBody] UserLoginDto loginDto)
@@ -50,6 +83,7 @@ namespace Praxisarbeit_M295.Controllers
             var token = _jwtService.GenerateToken(user.Username, user.Role);
             return Ok(new { Token = token });
         }
+
 
         // POST: api/Users/Register
         [HttpPost("Register")]

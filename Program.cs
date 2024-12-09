@@ -7,59 +7,84 @@ using Praxisarbeit_M295.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Geheimschlüssel für JWT aus der Konfigurationsdatei
-var key = builder.Configuration["JwtSettings:Key"] ?? "SuperSecretKey123!"; // Fallback, falls der Key fehlt
+// **JWT-Parameter aus Konfiguration**
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var key = jwtSettings["Key"] ?? "SuperSecretKey123!";
+var issuer = jwtSettings["Issuer"] ?? "DefaultIssuer";
+var audience = jwtSettings["Audience"] ?? "DefaultAudience";
+var expiryHours = int.Parse(jwtSettings["ExpiryHours"] ?? "2");
 
-// Konfiguriere den DbContext für SQL Server
+// **Datenbank-Konfiguration (SQL Server)**
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Konfiguriere Authentifikation mit JWT
+// **JWT-Authentifizierung konfigurieren**
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true, // Optional: Herausgeber (Issuer) validieren
-            ValidIssuer = builder.Configuration["JwtSettings:Issuer"], // Herausgeber festlegen
-            ValidateAudience = true, // Optional: Zielgruppe (Audience) validieren
-            ValidAudience = builder.Configuration["JwtSettings:Audience"], // Zielgruppe festlegen
-            ValidateLifetime = true, // Ablaufzeit des Tokens validieren
-            ValidateIssuerSigningKey = true, // Signatur des Tokens validieren
+            ValidateIssuer = true, // Herausgeber validieren
+            ValidIssuer = issuer, // Herausgeber
+            ValidateAudience = true, // Zielgruppe validieren
+            ValidAudience = audience, // Zielgruppe
+            ValidateLifetime = true, // Ablaufzeit validieren
+            ValidateIssuerSigningKey = true, // Signatur validieren
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)) // Geheimschlüssel
+        };
+
+        // **JWT-Fehlerprotokollierung**
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine($"Token-Validierung fehlgeschlagen: {context.Exception.Message}");
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                Console.WriteLine($"Token für Benutzer {context.Principal.Identity?.Name} validiert.");
+                return Task.CompletedTask;
+            }
         };
     });
 
-// Füge den JwtService als Singleton hinzu
+// **JwtService registrieren**
 builder.Services.AddSingleton<IJwtService>(sp =>
-    new JwtService(key, int.Parse(builder.Configuration["JwtSettings:ExpiryHours"] ?? "2"))); // Ablaufzeit aus der Konfiguration
+    new JwtService(key, expiryHours, issuer, audience));
 
-// Füge Controller-Dienste hinzu
+// **Controller-Dienste hinzufügen**
 builder.Services.AddControllers();
 
-// Konfiguriere Swagger für API-Dokumentation
+// **Swagger für API-Dokumentation**
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Erstelle die Anwendung
+// **Anwendung erstellen**
 var app = builder.Build();
 
-// Konfiguriere die HTTP-Pipeline für die Entwicklungsumgebung
+// **HTTP-Pipeline konfigurieren**
 if (app.Environment.IsDevelopment())
 {
+    // Swagger nur in der Entwicklungsumgebung aktivieren
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    // **Fehlerseiten und Sicherheit in der Produktion**
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
+}
 
-// Aktiviere HTTPS-Umleitungen
-app.UseHttpsRedirection();
+// **Middleware aktivieren**
+app.UseMiddleware<RequestLoggingMiddleware>(); // Eigene Middleware für Protokollierung
+app.UseHttpsRedirection(); // HTTPS erzwingen
+app.UseAuthentication(); // JWT-Authentifizierung aktivieren
+app.UseAuthorization(); // Autorisierung aktivieren
 
-// Aktiviere Authentifikations- und Autorisierungs-Middleware
-app.UseAuthentication();
-app.UseAuthorization();
-
-// Mappe die Controller
+// **Controller-Routing**
 app.MapControllers();
 
-// Starte die Anwendung
+// **Anwendung starten**
 app.Run();

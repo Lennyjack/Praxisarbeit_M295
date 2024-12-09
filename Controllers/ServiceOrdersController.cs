@@ -21,7 +21,10 @@ namespace Praxisarbeit_M295.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ServiceOrder>>> GetServiceOrders()
         {
-            return await _context.ServiceOrders.ToListAsync();
+            // Nur nicht gelöschte Aufträge zurückgeben
+            return await _context.ServiceOrders
+                .Where(order => !order.IsDeleted)
+                .ToListAsync();
         }
 
         // GET: api/ServiceOrders/5
@@ -30,19 +33,43 @@ namespace Praxisarbeit_M295.Controllers
         {
             var serviceOrder = await _context.ServiceOrders.FindAsync(id);
 
-            if (serviceOrder == null)
+            if (serviceOrder == null || serviceOrder.IsDeleted)
             {
-                return NotFound();
+                return NotFound(new { Message = "Serviceauftrag nicht gefunden." });
             }
 
             return serviceOrder;
+        }
+
+        // GET: api/ServiceOrders/User/{userId}
+        [Authorize] // Autorisierung erforderlich
+        [HttpGet("User/{userId}")]
+        public async Task<ActionResult<IEnumerable<ServiceOrder>>> GetOrdersByUser(int userId)
+        {
+            // Prüfen, ob der Benutzer existiert
+            var userExists = await _context.Users.AnyAsync(u => u.UserId == userId);
+            if (!userExists)
+            {
+                return NotFound(new { Message = "Benutzer nicht gefunden." });
+            }
+
+            // Aufträge des Benutzers abrufen
+            var userOrders = await _context.ServiceOrders
+                .Where(order => order.AssignedTo == userId && !order.IsDeleted)
+                .ToListAsync();
+
+            if (!userOrders.Any())
+            {
+                return NotFound(new { Message = "Keine Aufträge für diesen Benutzer gefunden." });
+            }
+
+            return Ok(userOrders);
         }
 
         // POST: api/ServiceOrders
         [HttpPost]
         public async Task<ActionResult<ServiceOrder>> PostServiceOrder(ServiceOrder serviceOrder)
         {
-            // Validierung hinzufügen (optional)
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -64,23 +91,23 @@ namespace Praxisarbeit_M295.Controllers
                 return BadRequest("ID im URL stimmt nicht mit der ID des Objekts überein.");
             }
 
-            _context.Entry(serviceOrder).State = EntityState.Modified;
+            // Sicherstellen, dass der Auftrag existiert und nicht gelöscht ist
+            var existingOrder = await _context.ServiceOrders.FindAsync(id);
+            if (existingOrder == null || existingOrder.IsDeleted)
+            {
+                return NotFound(new { Message = "Serviceauftrag nicht gefunden." });
+            }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ServiceOrderExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            // Auftrag aktualisieren
+            existingOrder.Priority = serviceOrder.Priority;
+            existingOrder.Status = serviceOrder.Status;
+            existingOrder.Service = serviceOrder.Service;
+            existingOrder.AssignedTo = serviceOrder.AssignedTo;
+            existingOrder.Name = serviceOrder.Name;
+            existingOrder.Email = serviceOrder.Email;
+            existingOrder.Phone = serviceOrder.Phone;
+
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -93,19 +120,56 @@ namespace Praxisarbeit_M295.Controllers
             var serviceOrder = await _context.ServiceOrders.FindAsync(id);
             if (serviceOrder == null)
             {
-                return NotFound();
+                return NotFound(new { Message = "Serviceauftrag nicht gefunden." });
             }
 
-            _context.ServiceOrders.Remove(serviceOrder);
+            // Auftrag als gelöscht markieren
+            serviceOrder.IsDeleted = true;
+
+            // Änderungen in der Datenbank speichern
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
+        [Authorize]
+        [HttpPut("{id}/Assign")]
+        public async Task<IActionResult> AssignServiceOrder(int id, [FromBody] int userId)
+        {
+            // Finde den Serviceauftrag
+            var serviceOrder = await _context.ServiceOrders.FindAsync(id);
+            if (serviceOrder == null)
+            {
+                return NotFound(new { Message = "Serviceauftrag nicht gefunden." });
+            }
+
+            // Finde den Benutzer
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound(new { Message = "Benutzer nicht gefunden." });
+            }
+
+            // Aktualisiere die Zuweisung
+            serviceOrder.AssignedTo = user.UserId;
+            serviceOrder.AssignedUser = user;
+
+            // Speichere die Änderungen
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                Message = "Serviceauftrag erfolgreich zugewiesen.",
+                ServiceOrderId = id,
+                AssignedTo = userId
+            });
+        }
+
+
         // Helper-Methode, um zu prüfen, ob ein ServiceOrder existiert
         private bool ServiceOrderExists(int id)
         {
-            return _context.ServiceOrders.Any(e => e.OrderId == id);
+            return _context.ServiceOrders.Any(e => e.OrderId == id && !e.IsDeleted);
         }
     }
 }
