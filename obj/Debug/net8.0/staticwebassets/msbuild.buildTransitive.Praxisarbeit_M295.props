@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\Praxisarbeit_M295.props" />
-</Project>
