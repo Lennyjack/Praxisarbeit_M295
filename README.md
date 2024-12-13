@@ -5,7 +5,9 @@
 Dieses Projekt ist eine Webanwendung zur Verwaltung und Buchung von Ski-Service-Dienstleistungen. Es besteht aus zwei Hauptkomponenten:
 
 1. **Frontend**: Eine benutzerfreundliche Oberfläche, die es Nutzern ermöglicht, sich zu registrieren, einzuloggen und Ski-Services zu buchen.
-2. **Backend**: Eine robuste REST-API, die mit .NET Core und Entity Framework entwickelt wurde und die Logik für Benutzerauthentifizierung, Service-Buchung und Datenbankverwaltung bereitstellt.
+   --> Der Frontend Teil befindet sich in diesem Repository: [Frontend](https://github.com/uluegee/updated_ski_service)
+3. **Backend**: Eine robuste REST-API, die mit .NET Core und Entity Framework entwickelt wurde und die Logik für Benutzerauthentifizierung, Service-Buchung und Datenbankverwaltung bereitstellt.
+   --> Der Backend Teil befindet sich in diesem Repository: [Backend](https://github.com/Lennyjack/Praxisarbeit_M295)
 
 ## Ziel des Projekts
 
