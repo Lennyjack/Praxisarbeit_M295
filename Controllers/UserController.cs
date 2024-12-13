@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Praxisarbeit_M295.Data;
 using Praxisarbeit_M295.Models;
 using Praxisarbeit_M295.Services;
+using System.Security.Claims;
 
 namespace Praxisarbeit_M295.Controllers
 {
@@ -36,20 +37,17 @@ namespace Praxisarbeit_M295.Controllers
             return Ok(users);
         }
 
-
         // GET: api/Users/Me
-        [Authorize] // Nur für authentifizierte Benutzer
+        [Authorize]
         [HttpGet("Me")]
         public async Task<ActionResult<User>> GetCurrentUser()
         {
-            // Hole den Benutzernamen aus dem JWT-Token
             var username = User.Identity?.Name;
             if (string.IsNullOrEmpty(username))
             {
                 return Unauthorized(new { Message = "Benutzer ist nicht authentifiziert." });
             }
 
-            // Suche den Benutzer in der Datenbank
             var user = await _context.Users
                 .SingleOrDefaultAsync(u => u.Username == username);
 
@@ -58,7 +56,6 @@ namespace Praxisarbeit_M295.Controllers
                 return NotFound(new { Message = "Benutzer wurde nicht gefunden." });
             }
 
-            // Gib den Benutzer zurück (ohne sensible Daten wie PasswordHash)
             return Ok(new
             {
                 user.UserId,
@@ -66,7 +63,6 @@ namespace Praxisarbeit_M295.Controllers
                 user.Role
             });
         }
-
 
         // POST: api/Users/Login
         [HttpPost("Login")]
@@ -81,7 +77,13 @@ namespace Praxisarbeit_M295.Controllers
             }
 
             var token = _jwtService.GenerateToken(user.Username, user.Role);
-            return Ok(new { Token = token });
+
+            // Rückgabe des Tokens und der Benutzer-ID
+            return Ok(new
+            {
+                Token = token,
+                UserId = user.UserId // Füge die userId zur Antwort hinzu
+            });
         }
 
 
@@ -100,7 +102,7 @@ namespace Praxisarbeit_M295.Controllers
             {
                 Username = registerDto.Username,
                 PasswordHash = passwordHash,
-                Role = "Kunde" // Standardrolle
+                Role = "Kunde"
             };
 
             _context.Users.Add(newUser);
@@ -114,20 +116,73 @@ namespace Praxisarbeit_M295.Controllers
             });
         }
 
-        // Hilfsfunktion: Erzeugt einen sicheren Passwort-Hash
+        // PUT: api/Users/{id}
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserRegisterDto userDto)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound(new { Message = "Benutzer nicht gefunden." });
+            }
+
+            user.Username = userDto.Username;
+            user.PasswordHash = CreatePasswordHash(userDto.Password);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                Message = "Benutzer erfolgreich aktualisiert.",
+                UserId = user.UserId,
+                Username = user.Username,
+                Role = user.Role
+            });
+        }
+
+        // DELETE: api/Users/{id}
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            // Finde den Benutzer anhand der ID
+            var user = await _context.Users.FindAsync(id);
+            //Console.Write("Geht es?");
+            if (user == null)
+            {
+                return NotFound(new { Message = "Benutzer wurde nicht gefunden." });
+            }
+            //Console.Write("Hallo Geht es bis Hier?");
+            // Lösche den Benutzer aus der Datenbank
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Benutzer erfolgreich gelöscht." });
+        }
+
+
+        [Authorize]
+        [HttpGet("DebugToken")]
+        public IActionResult DebugToken()
+        {
+            var username = User.Identity?.Name;
+            var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            return Ok(new { Username = username, Role = role });
+        }
+
+
         private string CreatePasswordHash(string password)
         {
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
-        // Hilfsfunktion: Überprüft ein Passwort gegen einen gespeicherten Hash
         private bool VerifyPasswordHash(string password, string storedHash)
         {
             return BCrypt.Net.BCrypt.Verify(password, storedHash);
         }
     }
 
-    // DTOs (Datenobjekte für Login und Registrierung)
     public class UserLoginDto
     {
         public string Username { get; set; }

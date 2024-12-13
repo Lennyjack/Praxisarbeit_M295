@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Praxisarbeit_M295.Services;
+using Praxisarbeit_M295.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,27 +25,50 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true, // Herausgeber validieren
-            ValidIssuer = issuer, // Herausgeber
-            ValidateAudience = true, // Zielgruppe validieren
-            ValidAudience = audience, // Zielgruppe
-            ValidateLifetime = true, // Ablaufzeit validieren
-            ValidateIssuerSigningKey = true, // Signatur validieren
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)) // Geheimschlüssel
+            ValidateIssuer = true,
+            ValidIssuer = issuer,
+            ValidateAudience = true,
+            ValidAudience = audience,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
         };
 
         // **JWT-Fehlerprotokollierung**
         options.Events = new JwtBearerEvents
         {
-            OnAuthenticationFailed = context =>
+            OnAuthenticationFailed = async context =>
             {
                 Console.WriteLine($"Token-Validierung fehlgeschlagen: {context.Exception.Message}");
-                return Task.CompletedTask;
+                if (context.HttpContext.RequestServices.GetService<ApplicationDbContext>() is ApplicationDbContext dbContext)
+                {
+                    await dbContext.Logs.AddAsync(new Log
+                    {
+                        Endpoint = context.HttpContext.Request.Path,
+                        HttpMethod = context.HttpContext.Request.Method,
+                        Message = $"Token-Validierung fehlgeschlagen: {context.Exception.Message}",
+                        StatusCode = "401",
+                        Timestamp = DateTime.UtcNow
+                    });
+                    await dbContext.SaveChangesAsync();
+                }
             },
-            OnTokenValidated = context =>
+            OnTokenValidated = async context =>
             {
-                Console.WriteLine($"Token für Benutzer {context.Principal.Identity?.Name} validiert.");
-                return Task.CompletedTask;
+                var username = context.Principal.Identity?.Name;
+                Console.WriteLine($"Token für Benutzer {username} validiert.");
+                if (context.HttpContext.RequestServices.GetService<ApplicationDbContext>() is ApplicationDbContext dbContext)
+                {
+                    await dbContext.Logs.AddAsync(new Log
+                    {
+                        Endpoint = context.HttpContext.Request.Path,
+                        HttpMethod = context.HttpContext.Request.Method,
+                        Message = $"Token validiert für Benutzer: {username}",
+                        StatusCode = "200",
+                        Timestamp = DateTime.UtcNow
+                    });
+                    await dbContext.SaveChangesAsync();
+                }
             }
         };
     });
@@ -56,6 +80,17 @@ builder.Services.AddSingleton<IJwtService>(sp =>
 // **Controller-Dienste hinzufügen**
 builder.Services.AddControllers();
 
+// **CORS-Konfiguration hinzufügen**
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 // **Swagger für API-Dokumentation**
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -66,22 +101,21 @@ var app = builder.Build();
 // **HTTP-Pipeline konfigurieren**
 if (app.Environment.IsDevelopment())
 {
-    // Swagger nur in der Entwicklungsumgebung aktivieren
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 else
 {
-    // **Fehlerseiten und Sicherheit in der Produktion**
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 
 // **Middleware aktivieren**
-app.UseMiddleware<RequestLoggingMiddleware>(); // Eigene Middleware für Protokollierung
-app.UseHttpsRedirection(); // HTTPS erzwingen
-app.UseAuthentication(); // JWT-Authentifizierung aktivieren
-app.UseAuthorization(); // Autorisierung aktivieren
+app.UseMiddleware<RequestLoggingMiddleware>();
+app.UseCors("AllowAll"); // CORS direkt hier anwenden
+app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 
 // **Controller-Routing**
 app.MapControllers();

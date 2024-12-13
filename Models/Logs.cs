@@ -7,6 +7,6 @@ namespace Praxisarbeit_M295.Models
         public string HttpMethod { get; set; } // HTTP-Methode (GET, POST, etc.)
         public string StatusCode { get; set; } // HTTP-Statuscode der Antwort
         public DateTime Timestamp { get; set; } // Zeitpunkt der Anfrage
-        public string? Message { get; set; } // Zusätzliche Informationen, z.B. Fehler
+        public string Message { get; set; } // Zusätzliche Informationen, z.B. Fehler
     }
 }
